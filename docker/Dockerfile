@@ -37,6 +37,20 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
+# --- Custom CA Certificate Import Steps for arm64 ---
+# This assumes 'custom-ca.crt' is in your build context (same directory as Dockerfile)
+COPY custom-ca.crt /usr/local/share/ca-certificates/custom-ca.crt
+RUN chmod 644 /usr/local/share/ca-certificates/custom-ca.crt && \
+    update-ca-certificates
+
+# Set necessary environment variables for applications to leverage the new CA bundle
+ENV SSL_CERT_DIR=/etc/ssl/certs
+ENV SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt
+ENV CURL_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt
+ENV NODE_EXTRA_CA_CERTS=/etc/ssl/certs/ca-certificates.crt
+ENV GIT_SSL_NO_VERIFY=false
+# --- End Custom CA Certificate Import Steps for arm64 ---
+
 # Create a group and user with specific UID and GID
 RUN groupadd -g "$ARG_GID" anythingllm && \
     useradd -l -u "$ARG_UID" -m -d /app -s /bin/bash -g anythingllm anythingllm && \
@@ -102,6 +116,20 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
         echo "Installed uvx! $(uv --version)" && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
+
+# --- Custom CA Certificate Import Steps for amd64 ---
+# This assumes 'custom-ca.crt' is in your build context (same directory as Dockerfile)
+COPY custom-ca.crt /usr/local/share/ca-certificates/custom-ca.crt
+RUN chmod 644 /usr/local/share/ca-certificates/custom-ca.crt && \
+    update-ca-certificates
+
+# Set necessary environment variables for applications to leverage the new CA bundle
+ENV SSL_CERT_DIR=/etc/ssl/certs
+ENV SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt
+ENV CURL_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt
+ENV NODE_EXTRA_CA_CERTS=/etc/ssl/certs/ca-certificates.crt
+ENV GIT_SSL_NO_VERIFY=false
+# --- End Custom CA Certificate Import Steps for amd64 ---
 
 # Create a group and user with specific UID and GID
 RUN groupadd -g "$ARG_GID" anythingllm && \
