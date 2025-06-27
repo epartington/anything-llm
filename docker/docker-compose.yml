@@ -1,4 +1,5 @@
-name: anythingllm
+version: '3.7' # You can keep this version as it's widely compatible
+# name: anythingllm # Removed as it's not a valid top-level property for the docker-compose command
 
 networks:
   anything-llm:
